@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<!--
+ JSON/XML-RPC Server Test Console <http://code.google.com/p/json-xml-rpc/>
+ Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
+ License: http://creativecommons.org/licenses/LGPL/2.1/
+-->
+	<head>
+		<title>JSON/XML-RPC Server Test Console</title>
+		<script type="text/javascript" src="prototype.js"></script>
+		<script type="text/javascript" src="effects.js"></script>
+		<script type="text/javascript" src="firebug/firebug.js"></script>
+		<script type="text/javascript" src="rpc.js"></script>
+		<script type="text/javascript" src="callServer.js"></script>
+		<style type="text/css">
+		#usageTips .content {
+			font-size:10pt;
+			display:none;
+		}
+		#usageTips:target .content {
+			display:inline;
+		}
+		#usageTips:target a .hidden {
+			display:none;
+		}
+		#usageTips a .shown {
+			display:none;
+		}
+		#usageTips:target a .shown {
+			display:inline;
+		}
+		
+		/*.failure {
+			background-color:#FFCCCC;
+		}
+		.success {
+			background-color:#99FF99;
+		}*/
+		legend {
+			padding-left:.5em;
+			padding-right:.5em;
+			background-color:white;
+			border:solid 2px #CCC;
+		}
+		fieldset {
+			border:solid 2px #CCC;
+			padding:.5em;
+		}
+		#responseFieldset {
+			margin-top:.5em;
+			margin-bottom:0;
+			padding:0;
+		}
+		#responseData {
+			/*height:10em;*/
+			overflow:auto;
+			margin:0;
+			padding:.5em;
+		}
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<legend>Request</legend>
+			<form action="server.php" method="POST" onsubmit="try{submitForm()}catch(e){console.error(e);} return false;">
+				<label for="requestCode">Enter the message that you wish to send to the server as either XML or JSON POST data or as URI path and query components. </label>
+				
+				<span id='usageTips'>
+					<span>(<a href="javascript:void(0)" id='showUsageTips'><span class='hidden'>Show tips</span><span class='shown'>Hide tips</span></a>)</span>
+					<span class='content'>
+					It must either be an
+					<a href="javascript:void(0)" id='insertXmlRpc' title="Insert code for this option">XML-RPC methodCall document</a>, a <a href="javascript:void(0)" id='insertJsonRpc' title="Insert code for this option">JSON-RPC request object</a>,
+					or <a href="javascript:void(0)" id='insertURI' title="Insert code for this option">HTTP Request-URI path and query components</a>,
+					such as "/passThrough?param1=val1"; for this last type, you may test cross-domain requests by <a href="javascript:void(0)" id='insertURICallback' title="Insert code for this option">specifying a callback function</a>
+					as the HTTP GET query parameter "<strong><code>JSON-response-callback</code></strong>"
+					with the value "myRpcCallback". Additionally, in order to facilitate non-RPC aware clients such as
+					Ext's TreeLoader, you may include the HTTP GET query parameter "<strong><code>JSON-omit-response-wrapper</code></strong>"
+					to <a href="javascript:void(0)" id='tryJSONResultOnly' title="Insert code for this option">retrieve the JSON result data only</a>
+					(may be <a href="javascript:void(0)" id='tryJSONResultOnlyWithCallback' title="Insert code for this option">used in conjunction</a> with <code>JSON-response-callback</code>").
+					Responses will be written below and also in the Firebug console.</span>
+				</span>
+				<br>
+				<textarea id='requestCode' style="width:100%; height:15em;">/system.listMethods</textarea><br>
+				<!--<label>Request type: <select id="contentType">
+					<option value="">(none)</option>
+					<option>text/xml</option>
+					<option>application/json</option>
+				</select></label>-->
+				<input type=submit value="Submit Request" > <label>HTTP Accept header: <select id="accept">
+					<option value="default">(unspecified)</option>
+					<option value="text/xml">text/xml</option>
+					<option value="application/json">application/json</option>
+				</select></label> <span class='fieldnote'>(applicable for XMLHttpRequest only; cross-domain json-in-script responses must return JSON)</span>
+				
+			</form>
+		</fieldset>
+		<fieldset id='responseFieldset'>
+			<legend>Response</legend>
+			<pre id='responseData'></pre>
+			
+			<!--<iframe id='responseIFrame' name='responseIFrame' src="about:blank" style="width:100%; height:10em;"></iframe>-->
+		</fieldset>
+</body>
+</html>

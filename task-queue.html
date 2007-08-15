@@ -16,6 +16,12 @@
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -45,9 +51,18 @@
 
 
 
+
+
+
   
 
 
+  
+  
+  
+  
+  
+  
   
   
   
@@ -81,6 +96,16 @@
 
 
 <body>
+<h1>Global Todo</h1>
+<ol>
+  <li>Write server docs</li>
+  <li>Upload docs to Wiki pages</li>
+  <li>Commit SVN</li>
+  <li>Create download... and release code</li>
+</ol>
+
+
+
 
 
 
@@ -100,7 +125,13 @@
 
 
 
+
+
+
 <ul>
+
+
+
 
 
 
@@ -119,7 +150,13 @@
 
 
 
+
+
+
   <li>QUESTION: Why can't I use this.readyState? within xhr.onreadystatechange()???</li>
+
+
+
 
 
 
@@ -138,7 +175,13 @@ is called from? If so, we can ditch the JSON-request-id parameter</li>
 
 
 
+
+
+
   <li>What is better (for Webforms2 as well)... typeof X == 'undefined' OR X == undefined</li>
+
+
+
 
 
 
@@ -159,6 +202,9 @@ is called from? If so, we can ditch the JSON-request-id parameter</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through;">Allow user to decide how they want Dates encoded</li>
 
 
@@ -167,6 +213,12 @@ is called from? If so, we can ditch the JSON-request-id parameter</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -182,7 +234,13 @@ is called from? If so, we can ditch the JSON-request-id parameter</li>
 
 
 
+
+
+
     <li>rpc.toJSON needs to be able to access the server's configuration</li>
+
+
+
 
 
 
@@ -198,6 +256,12 @@ is called from? If so, we can ditch the JSON-request-id parameter</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -206,6 +270,9 @@ is called from? If so, we can ditch the JSON-request-id parameter</li>
   
   
   </ul>
+
+
+
 
 
 
@@ -221,7 +288,13 @@ is called from? If so, we can ditch the JSON-request-id parameter</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through;">When the user specified asyncrhonous, the introspection is erroneaously called asyncrhnously</li>
+
+
+
 
 
 
@@ -237,7 +310,13 @@ is called from? If so, we can ditch the JSON-request-id parameter</li>
 
 
 
-  <li>use: onSuccess, onException, onComplete????</li>
+
+
+
+  <li style="text-decoration: line-through;">use: onSuccess, onException, onComplete????</li>
+
+
+
 
 
 
@@ -253,7 +332,13 @@ in response</li>
 
 
 
+
+
+
   <li>how can we force synchronous mode, or switch back and for between when one or the other is more appropriate????</li>
+
+
+
 
 
 
@@ -261,57 +346,129 @@ in response</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
   <ul>
+
+
+
 
 
 
     <li>"protocol" config property... &nbsp;if not specified, try introspection?</li>
 
 
-    <li>note that XML-RPC responses do not contain id's.... should we
+
+
+
+    <li style="text-decoration: line-through;">note that XML-RPC responses do not contain id's.... should we
 assign the response to response.result/error? Also we don't even need
 the ID to be passed if this works:&nbsp;response.id = rpc.requestCount; </li>
 
 
-    <li>how do we serialize XML data automatically? should we instead of creating an XML node just compile a string?</li>
+
+
+
+    <li style="text-decoration: line-through;">how do we serialize XML data automatically? should we instead of creating an XML node just compile a string?</li>
+
+
+
 
   
+  
+  
+  
   </ul>
+
+
+
 
 
   <li>can we throw different types of exceptions?</li>
 
 
+
+
+
+  
+  
+  
   
   
   <ul>
+
+
+
 
 
     <li>ServerException</li>
 
 
+
+
+
     <li>ClientException</li>
+
+
+
 
 
     <li>HandlerException</li>
 
 
+
+
+
+  
+  
+  
   
   
   </ul>
+
+
+
 
 
   <li style="text-decoration: line-through;">dateEncoding</li>
 
+
+
+
   <li style="text-decoration: line-through;">decodeISO8601</li>
 
+
+
+
   <li>test upgrading values: jsonclass, ASP.NET, @ticks@</li>
+
+
+
+  
+  
+  
   <ul>
+
+
+
     <li>what happens with timezone for GMT? Can we get GMT value?</li>
+
+
+
+  
+  
+  
   </ul>
+
+
+
 
 
 
@@ -329,7 +486,13 @@ the ID to be passed if this works:&nbsp;response.id = rpc.requestCount; </li>
 
 
 
+
+
+
 <br>
+
+
+
 
 
 
@@ -361,7 +524,13 @@ the ID to be passed if this works:&nbsp;response.id = rpc.requestCount; </li>
 
 
 
+
+
+
 </ol>
+
+
+
 
 
 
@@ -393,7 +562,13 @@ the ID to be passed if this works:&nbsp;response.id = rpc.requestCount; </li>
 
 
 
+
+
+
 <ol>
+
+
+
 
 
 
@@ -411,7 +586,13 @@ the ID to be passed if this works:&nbsp;response.id = rpc.requestCount; </li>
 
   <li>errorDetails</li>
 
+
+
+
   <li>validateParams</li>
+
+
+
 
 
 
@@ -443,6 +624,9 @@ the ID to be passed if this works:&nbsp;response.id = rpc.requestCount; </li>
 
 
 
+
+
+
 <h2>Pending issues (unimplemented features)</h2>
 
 
@@ -459,7 +643,13 @@ the ID to be passed if this works:&nbsp;response.id = rpc.requestCount; </li>
 
 
 
+
+
+
 <ol>
+
+
+
 
 
 
@@ -492,7 +682,13 @@ Procedures Only</li>
 
 
 
+
+
+
   <li>JSON-RPC 1.1: &nbsp;6.6. Procedure Call Parity</li>
+
+
+
 
 
 
@@ -532,8 +728,14 @@ methods to advertise the relocation of a service.</li>
 
 
 
+
+
+
   <li>The error object has a code property that MUST be an
 integer between 100 and 999. WHY?</li>
+
+
+
 
 
 
@@ -566,8 +768,14 @@ by the functions called?</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through; color: gray;">What is the
 spec for XML-RPC's server descibed introspection...</li>
+
+
+
 
 
 
@@ -600,6 +808,9 @@ jsonXmlRpcServer class</li>
 
 
 
+
+
+
   <li>Make a custom json_encode function to deal with Date
 objects....</li>
 
@@ -617,6 +828,12 @@ objects....</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -632,6 +849,9 @@ objects....</li>
   
   
   <ol>
+
+
+
 
 
 
@@ -664,6 +884,12 @@ positional?</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -679,6 +905,9 @@ positional?</li>
   
   
   </ol>
+
+
+
 
 
 
@@ -710,7 +939,13 @@ positional?</li>
 
 
 
+
+
+
   <li>multiCall</li>
+
+
+
 
 
 
@@ -743,7 +978,13 @@ positional?</li>
 
 
 
+
+
+
   <li>Address the JSON-RPC 1.1 &nbsp;section 13. Limitations</li>
+
+
+
 
 
 
@@ -776,8 +1017,14 @@ Procedure and Parameter Names</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through; color: gray;">WRITE
 SERIALIZER FOR XML-RPC</li>
+
+
+
 
 
 
@@ -809,6 +1056,12 @@ PARAMETER-PASSING LOGIC</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -838,6 +1091,9 @@ PARAMETER-PASSING LOGIC</li>
 
 
 
+
+
+
     <li>all parameters should be passed... first pass those which match function parameters</li>
 
 
@@ -853,7 +1109,13 @@ PARAMETER-PASSING LOGIC</li>
 
 
 
+
+
+
     <li>note: if a parameter is not supplied, it should throw an error.... EXCEPT if a default value is provided</li>
+
+
+
 
 
 
@@ -885,9 +1147,15 @@ the NULL param override the default value?</li>
 
 
 
+
+
+
     <li>If the name of the object member
 consists entirely of decimal digits (0-9) then it identifies &nbsp;the
 parameter by its position in the formal argument list.</li>
+
+
+
 
 
 
@@ -917,6 +1185,12 @@ parameter by its position in the formal argument list.</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -932,6 +1206,9 @@ parameter by its position in the formal argument list.</li>
   
   
   </ol>
+
+
+
 
 
 
@@ -964,6 +1241,9 @@ happening with utf-8 data</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through; color: gray;">How do we get
 timestamp from DateTime object???</li>
 
@@ -981,8 +1261,14 @@ timestamp from DateTime object???</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through; color: gray;">Write
 convertResource to finesse recognized types to a Data Struct</li>
+
+
+
 
 
 
@@ -1016,6 +1302,9 @@ parse JSON \/Date()\/ &nbsp;when it is parsed by json_decode as
 
 
 
+
+
+
   <li style="text-decoration: line-through; color: gray;">Fix JSON date
 parsing</li>
 
@@ -1033,6 +1322,12 @@ parsing</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1048,6 +1343,9 @@ parsing</li>
   
   
   <ol style="text-decoration: line-through; color: gray;">
+
+
+
 
 
 
@@ -1080,8 +1378,14 @@ object</li>
 
 
 
+
+
+
     <li>passThrough of &nbsp;"@1183913472872@" is
 returning&nbsp;"@11839134720@"</li>
+
+
+
 
 
 
@@ -1114,7 +1418,13 @@ parse timestamp into a DateTime object</li>
 
 
 
+
+
+
     <li>PHP's json_decode() function cannot handle 64-bit integers</li>
+
+
+
 
 
 
@@ -1147,6 +1457,12 @@ set the milliseconds of DateTime object</span>?</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1177,7 +1493,13 @@ set the milliseconds of DateTime object</span>?</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through; color: rgb(192, 192, 192);">What happens when integers are too big?</li>
+
+
+
 
 
 
@@ -1210,6 +1532,9 @@ as a string literal should fail, but it is passing</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through; color: gray;">JSON String
 shouldn't have special characters escaped</li>
 
@@ -1227,6 +1552,12 @@ shouldn't have special characters escaped</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1242,6 +1573,9 @@ shouldn't have special characters escaped</li>
   
   
   <ol style="text-decoration: line-through; color: gray;">
+
+
+
 
 
 
@@ -1273,6 +1607,12 @@ shouldn't have special characters escaped</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1288,6 +1628,9 @@ shouldn't have special characters escaped</li>
   
   
   </ol>
+
+
+
 
 
 
@@ -1320,6 +1663,9 @@ shouldn't have special characters escaped</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through;">OR: we should make RPCServer into a singleton...</li>
 
 
@@ -1336,6 +1682,12 @@ shouldn't have special characters escaped</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1351,6 +1703,9 @@ shouldn't have special characters escaped</li>
   
   
   <ol style="text-decoration: line-through;">
+
+
+
 
 
 
@@ -1382,6 +1737,12 @@ shouldn't have special characters escaped</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1397,6 +1758,9 @@ shouldn't have special characters escaped</li>
   
   
   </ol>
+
+
+
 
 
 
@@ -1429,6 +1793,12 @@ JSON_DECODE for numbers...&nbsp;</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1444,6 +1814,9 @@ JSON_DECODE for numbers...&nbsp;</li>
   
   
   <ol style="text-decoration: line-through; color: gray;">
+
+
+
 
 
 
@@ -1475,6 +1848,12 @@ JSON_DECODE for numbers...&nbsp;</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1490,6 +1869,9 @@ JSON_DECODE for numbers...&nbsp;</li>
   
   
   </ol>
+
+
+
 
 
 
@@ -1522,7 +1904,13 @@ according Unicode spec</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through; color: rgb(204, 204, 204);">What happens when numbers are used as struct member names?</li>
+
+
+
 
 
 
@@ -1551,6 +1939,9 @@ according Unicode spec</li>
 
 
 
+
+
+
   <li><span id="pageTitle">How can we reference functions that appear within objects?.... second parameter for privateProc should be array(obj, method)</span></li>
 
 
@@ -1565,6 +1956,12 @@ according Unicode spec</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1579,6 +1976,9 @@ according Unicode spec</li>
   
   
   <ol>
+
+
+
 
 
 
@@ -1606,6 +2006,12 @@ according Unicode spec</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1633,6 +2039,9 @@ according Unicode spec</li>
 
 
 
+
+
+
   <li>Issue: for JSON-RPC specifically, we must be able to make requests via inserting SCRIPT elements</li>
 
 
@@ -1647,6 +2056,12 @@ according Unicode spec</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1674,7 +2089,13 @@ according Unicode spec</li>
 
 
 
+
+
+
     <li>Question: what is the standard name for passing callback function name to the server? What does GData do? "callback"</li>
+
+
+
 
 
 
@@ -1691,6 +2112,9 @@ according Unicode spec</li>
     <li>What is the convention for returning JSON data from the server
 while cross-domain (data will not be strictly JSON since callback will
 be included)</li>
+
+
+
 
 
 
@@ -1723,6 +2147,12 @@ error object only. XML-RPC&nbsp;</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1750,7 +2180,13 @@ error object only. XML-RPC&nbsp;</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through; color: rgb(204, 204, 204);">What about Class RpcServer? Using RPCClient is ugly.... I suppose I can just do new RPC.ServiceProxy();</li>
+
+
+
 
 
 
@@ -1779,7 +2215,13 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through; color: rgb(204, 204, 204);">We should delete the previous SCRIPT tags.</li>
+
+
+
 
 
 
@@ -1801,6 +2243,12 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1822,7 +2270,13 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
     <li>JSON-omit-response-wrapper</li>
+
+
+
 
 
 
@@ -1844,6 +2298,12 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1855,6 +2315,9 @@ all... is a try/catch block only for exceptions????</li>
   
   
   </ol>
+
+
+
 
 
 
@@ -1871,7 +2334,13 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
   <li>Can we pass the context information within the Error object???</li>
+
+
+
 
 
 
@@ -1883,7 +2352,13 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
   <li>QUESTION: How can we pass additional error information back in XML-RPC?</li>
+
+
+
 
 
 
@@ -1895,6 +2370,12 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1906,7 +2387,13 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
     <li>Use VAR instaed of public/private/protected....</li>
+
+
+
 
 
 
@@ -1918,6 +2405,12 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
+  
+  
+  
   
   
   
@@ -1928,11 +2421,20 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
   <li style="text-decoration: line-through;">Make calling procesRequests optional</li>
 
 
 
+
+
+
   <li></li>
+
+
+
 
 
 
@@ -1964,6 +2466,9 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
 <h2>Untested features</h2>
 
 
@@ -1980,7 +2485,13 @@ all... is a try/catch block only for exceptions????</li>
 
 
 
+
+
+
 <ol>
+
+
+
 
 
 
@@ -2013,7 +2524,13 @@ Parameter Names</li>
 
 
 
+
+
+
 </ol>
+
+
+
 
 
 
@@ -2045,6 +2562,9 @@ Parameter Names</li>
 
 
 
+
+
+
 <ul>
 
 
@@ -2061,7 +2581,13 @@ Parameter Names</li>
 
 
 
+
+
+
 </ul>
+
+
+
 
 
 

@@ -29,7 +29,7 @@ class RPCServer {
 	var $XML = 1;
 	var $JSON = 2;
 	var $JAVASCRIPT = 3;
-	var $HTTP_GET = 4;
+	//var $HTTP_GET = 4;
 	
 	var $name;
 	var $id;

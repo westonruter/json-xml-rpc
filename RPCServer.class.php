@@ -29,7 +29,7 @@ class RPCServer {
 	const XML = 1;
 	const JSON = 2;
 	const JAVASCRIPT = 3;
-	const HTTP_GET = 4;
+	//const HTTP_GET = 4;
 	
 	public $name;
 	public $id;
@@ -87,8 +87,8 @@ class RPCServer {
 	
 	#protected function convertResource($resource)
 	
-	#private static function getEscapeSequence_callback($regExMatches)
-	#private static function getEscapedChar_callback($regExMatches)
+	#protected static function getEscapeSequence_callback($regExMatches)
+	#protected static function getEscapedChar_callback($regExMatches)
 	#protected static function isVector(&$array)
 	#protected static function stringToNumber($str)
 	#protected static function stringToType($str)
@@ -1616,7 +1616,7 @@ class RPCServer {
 	}
 	
 	#Function for preg_replace_callback('([\\\\\/"\x00-\x1F])')
-	private static function getEscapeSequence_callback($regExMatches){
+	protected static function getEscapeSequence_callback($regExMatches){
 		if(isset(self::$charToJSON[$regExMatches[0]]))
 			return self::$charToJSON[$regExMatches[0]];
 		return sprintf('\\u00%02x', ord($regExMatches[0]));
@@ -1633,7 +1633,7 @@ class RPCServer {
 	);
 
 	#Function for preg_replace_callback('{(\\\\(?:u[0-9a-zA-Z]{4}|"|/|\\\\|[btnfr]))}')
-	private static function getEscapedChar_callback($regExMatches){
+	protected static function getEscapedChar_callback($regExMatches){
 		$c = substr($regExMatches[0], 1, 1);
 		switch($c){
 			case 'b': return "\x08"; 

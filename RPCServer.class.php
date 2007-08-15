@@ -1,14 +1,14 @@
 <?php
 # JSON/XML-RPC Server in PHP5 <http://code.google.com/p/json-xml-rpc/>
-# Version: 0.1 (2007-07-29)
+# Version: 0.8 (2007-07-29)
 # Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
 # License: GNU General Public License, Free Software Foundation
 #          <http://creativecommons.org/licenses/GPL/2.0/>
 #
 # The comments contained in this code are largely quotations from the following specs:
-#   * XML-RPC Specification: <http://www.xmlrpc.com/spec>
-#   * JSON-RPC 1.0 Specification: <http://json-rpc.org/wiki/specification>
-#   * JSON-RPC 1.1 (draft) Specification: <http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html>
+#   * XML-RPC: <http://www.xmlrpc.com/spec>
+#   * JSON-RPC 1.0: <http://json-rpc.org/wiki/specification>
+#   * JSON-RPC 1.1 (draft): <http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html>
 #
 # Usage:
 # if(!class_exists('DateTime'))

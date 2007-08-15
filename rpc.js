@@ -1,5 +1,5 @@
 /*
- * JSON-RPC Client <http://code.google.com/p/json-xml-rpc/>
+ * JSON/XML-RPC Client <http://code.google.com/p/json-xml-rpc/>
  * Version: 0.8 (2007-08-08)
  * Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
  * License: GNU General Public License, Free Software Foundation
@@ -8,11 +8,12 @@
  * Original inspiration for the design of this implementation is from jsolait, from which 
  * are taken the "ServiceProxy" name and the interface for synchronous method calls.
  * 
- * See the JSON-RPC specifications:
+ * See the following specifications:
+ *   - XML-RPC: <http://www.xmlrpc.com/spec>
  *   - JSON-RPC 1.0: <http://json-rpc.org/wiki/specification>
  *   - JSON-RPC 1.1 (draft): <http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html>
  *
- * USAGE:
+ * Usage:
  * var service = new rpc.ServiceProxy("/app/service", {
  *                         asynchronous: true,   //default: true
  *                         sanitize: true,       //default: true

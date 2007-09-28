@@ -1,6 +1,6 @@
 /*
  * JSON/XML-RPC Client <http://code.google.com/p/json-xml-rpc/>
- * Version: 0.8 (2007-08-08)
+ * Version: 0.8.0.1 (2007-09-28)
  * Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
  * License: GNU General Public License, Free Software Foundation
  *          <http://creativecommons.org/licenses/GPL/2.0/>
@@ -74,7 +74,7 @@
  */
 
 var rpc = {
-	version:"0.8",	
+	version:"0.8.0.1",	
 	requestCount: 0
 };
 
@@ -232,7 +232,7 @@ rpc.ServiceProxy.prototype.__callMethod = function(methodName, params, successHa
 			rpc.callbacks['r' + String(rpc.requestCount)] = (function(instance, id){
 				var call = {instance: instance, id: id}; //Pass parameter into closure
 				return function(response){
-					if(response instanceof Object && (response.result || response.error)){	
+					if(response instanceof Object && (response.result || response.error)){
 						response.id = call.id;
 						instance.__doCallback(response);
 					}
@@ -351,8 +351,12 @@ rpc.ServiceProxy.prototype.__callMethod = function(methodName, params, successHa
 							instance.__doCallback(response);
 						}
 						//JSON-RPC
-						else
-							instance.__doCallback(instance.__evalJSON(xhr.responseText, instance.__isResponseSanitized));
+						else {
+							var response = instance.__evalJSON(xhr.responseText, instance.__isResponseSanitized);
+							if(!response.id)
+								response.id = requestInfo.id;
+							instance.__doCallback(response);
+						}
 					}
 				};
 				
@@ -839,7 +843,7 @@ rpc.ServiceProxy.prototype.__parseXMLRPC = function(valueEl){
 				case 'boolean':
 					if(typeEL.firstChild.nodeValue != '0' && typeEL.firstChild.nodeValue != '1')
 						throw Error("XML-RPC Parse Error: The value provided as a boolean '" + typeEL.firstChild.nodeValue + "' is invalid.");
-					return Boolean(typeEL.firstChild.nodeValue);
+					return Boolean(parseInt(typeEL.firstChild.nodeValue));
 				case 'string':
 					if(!typeEL.firstChild)
 						return "";

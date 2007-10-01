@@ -70,7 +70,7 @@ class RPCServer {
 	#function setDefaultResponseType($type)
 	#function setJSONDateFormat($formatName)
 	#function setDBResultIndexType($indexType)
-	#function setDebugMode($bool)
+	#function setDebugMode($state)
 	#function addMethod($privateProcName, $publicMethodName)
 	#protected function printResponseStart()
 	#protected function printResponseEnd()
@@ -92,7 +92,7 @@ class RPCServer {
 	#protected static function isVector(&$array)
 	#protected static function stringToNumber($str)
 	#protected static function stringToType($str)
-	#protected static function timestampToDateTime($timestamp)
+	#protected static function ticksToDateTime($ticks)
 	#protected static function unicodeToUtf8($src)
 
 	/*BEGIN PHP5*/
@@ -140,12 +140,12 @@ class RPCServer {
 		$this->responseType = null;
 		
 		#"Don't assume a timezone. It should be specified by the server in its documentation what
-		#   assumptions it makes about timezones." This implementation assumes universal time.
+		#   assumptions it makes about timezones." 
 		/*BEGIN PHP5*/
-		date_default_timezone_set("GMT");
+		//date_default_timezone_set("UTC"); //This implementation was assuming universal time.
 		/*END PHP5*/
 		/*BEGIN PHP4**
-		putenv('TZ=GMT'); #IS THIS VALID?
+		//putenv('TZ=UTC'); #IS THIS VALID? //This implementation was assuming universal time.
 		**END PHP4*/
 		
 		#Set error handler
@@ -234,6 +234,9 @@ class RPCServer {
 			case 'ASP.NET':
 				$this->JSONDateFormat = $formatName;
 				break;
+			case '@timestamp@':
+				$this->JSONDateFormat = '@ticks@';
+				break;
 			default:
 				trigger_error('Invalid format name "' . $formatName . '" provided for specifying the JSON date format. Format must be either "ISO8601", "classHinting", "@ticks@", or "ASP.NET".');
 		}
@@ -256,8 +259,8 @@ class RPCServer {
 		return true;
 	}
 	
-	function setDebugMode($bool){
-		$this->isDebugMode = (bool) $bool;
+	function setDebugMode($state){
+		$this->isDebugMode = (bool) $state;
 	}
 	
 	#If a public method name is not provided, then the PHP function name will be used as the public name
@@ -1000,6 +1003,7 @@ class RPCServer {
 					unset($requestParams[$i]);
 				}
 				#Provide default for missing parameter if provided and if default values are preserved
+				# This ability is not specified by 1.1 WD as it requires that NULL be supplied as default
 				else if($this->defaultParametersPreserved && isset($param['default'])){
 					array_push($paramsToPass, $param['default']);
 				}
@@ -1113,14 +1117,14 @@ class RPCServer {
 			$className = get_class($value);
 			switch($className){
 				case 'DateTime':
-					$timestamp = $value->format("U") . substr($value->format("u"), 0, 3); //round($value->format("u")/1000);
+					$ticks = $value->format("U") . substr($value->format("u"), 0, 3); //round($value->format("u")/1000);
 					switch($this->JSONDateFormat){
 						case 'classHinting':
-							return '{"__jsonclass__":["Date", [' . $timestamp . ']]}'; #json_encode(str_replace("+0000", "Z", $value->format(DATE_ISO8601)))
+							return '{"__jsonclass__":["Date", [' . $ticks . ']]}'; #json_encode(str_replace("+0000", "Z", $value->format(DATE_ISO8601)))
 						case '@ticks@':
-							return '"@' . $timestamp . '@"'; #str_replace("+0000", "Z", $value->format(DATE_ISO8601)))
+							return '"@' . $ticks . '@"'; #str_replace("+0000", "Z", $value->format(DATE_ISO8601)))
 						case 'ASP.NET':
-							return '"\\/Date(' . $timestamp . ')\\/"'; #json_encode(str_replace("+0000", "Z", $value->format(DATE_ISO8601)))
+							return '"\\/Date(' . $ticks . ')\\/"'; #json_encode(str_replace("+0000", "Z", $value->format(DATE_ISO8601)))
 						default: #case 'ISO8601':
 							return '"' . $value->format('Y-m-d\TH:i:s.u') . '"';
 					}
@@ -1221,7 +1225,7 @@ class RPCServer {
 											$param = $obj[$name]['__jsonclass__'][1][0];
 											print $param . "##\n";
 											if(is_numeric($param))
-												$obj[$name] = self::timestampToDateTime((double) $param);
+												$obj[$name] = self::ticksToDateTime((double) $param);
 											else
 												$obj[$name] = new DateTime($param);
 										}
@@ -1253,7 +1257,7 @@ class RPCServer {
 										if(get_class($param) == 'DateTime')
 											$jsonObj = $param;
 										else if(is_numeric($param))
-											$jsonObj = self::timestampToDateTime((double) $param);
+											$jsonObj = self::ticksToDateTime((double) $param);
 										else
 											$jsonObj = new DateTime($param);
 										break;
@@ -1313,7 +1317,7 @@ class RPCServer {
 					if(preg_match('{^"\\\\/Date\((\d+)\)\\\\/"$}', $tokens[$i], $matches) ||
 					   preg_match('{^"@(\d+)@"$}', $tokens[$i], $matches))
 					{
-						return self::timestampToDateTime((double) $matches[1]);
+						return self::ticksToDateTime((double) $matches[1]);
 					}
 
 					#Parse ISO8601 string
@@ -1695,9 +1699,9 @@ class RPCServer {
 		return $str;
 	}
 	
-	# Convert a (double) timestamp (the largest number format) to a DateTime
-	protected static function timestampToDateTime($timestamp){
-		$longint = sprintf("%.0f", (double) $timestamp);
+	# Convert a (double) ticks (the largest number format) to a DateTime
+	protected static function ticksToDateTime($ticks){
+		$longint = sprintf("%.0f", (double) $ticks);
 		$ms = (int)substr($longint, -3);
 		$secs = (int)substr($longint, 0, strlen($longint)-3);
 		$date = new DateTime(gmdate('Y-m-d\TH:i:s.' . $ms . 'Z', $secs));

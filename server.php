@@ -1,8 +1,6 @@
 <?php
 require_once('RPCServer.class.php');
 
-
-
 //class Point2D {
 //   var $x, $y;
 //   var $label;
@@ -50,6 +48,19 @@ function passThrough(/*...*/){
 	return func_get_args();
 }
 $server->addMethod("passThrough");
+
+function tryDefaultArguments(//$null = null,
+							 //$bool = true,
+							 //$int = 7,
+							 //$float = 3.14,
+							 array $array1 = array(),
+							 $array2 = array(1, "*", 2),
+							 $array3 = array(array(array(array(1,2,3))), array(1,"foo"))
+							)
+{
+	return func_get_args();
+}
+$server->addMethod("tryDefaultArguments");
 
 function getServerSource(){
 	return fopen("server.php", 'r');

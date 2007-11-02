@@ -1,6 +1,6 @@
 <?php
 # JSON/XML-RPC Server in PHP5 <http://code.google.com/p/json-xml-rpc/>
-# Version: 0.8 (2007-07-29)
+# Version: 0.8.0.1 (2007-11-02)
 # Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
 # License: GNU General Public License, Free Software Foundation
 #          <http://creativecommons.org/licenses/GPL/2.0/>
@@ -441,7 +441,7 @@ class RPCServer {
 			 $this->JSONDateFormat = $_COOKIE['JSONDateFormat'];
 		if(isset($_COOKIE['dbResultIndexType']))
 			 $this->dbResultIndexType = $_COOKIE['dbResultIndexType'];
-		
+
 		$this->publicMethodName = '';
 		$requestParams = array();
 		$this->requestID = null;
@@ -673,6 +673,7 @@ class RPCServer {
 								$paramDetails = array('name' => substr($tokens[$i][1], 1),
 													  'type' => 'any');
 								
+								#Get the argument type
 								if(is_array($tokens[$i-1])){
 									#Object parameter (specifically DateTime)
 									if($tokens[$i-1][0] == T_STRING){
@@ -687,16 +688,17 @@ class RPCServer {
 										}
 									}
 									#Array parameter
-									else if($tokens[$i-1][0] == T_ARRAY)
+									else if($tokens[$i-1][0] == T_ARRAY){
 										#$paramType = 'arr';
 										$paramDetails['type'] = 'arr';
+									}
 								}
 								#Of course data may not be passed from the client by reference
 								else if($tokens[$i-1] == '&')
 									trigger_error("User functions cannot be defined with parameters passed by reference.");
 								
 								#Get the default value if it was was provided
-								else if($this->defaultParametersPreserved && $tokens[$i+1] == '='){
+								if($this->defaultParametersPreserved && $tokens[$i+1] == '='){
 									#$paramDetails['default']
 									if(is_array($tokens[$i+2])){
 										switch($tokens[$i+2][0]){
@@ -705,34 +707,38 @@ class RPCServer {
 												#   literal array value used for the default; then eval this string
 												$evalVal = 'array(';
 												$arrayParenDepth = 1;
-												for($i += 4; $arrayParenDepth > 0; $i++){
-													if(is_array($tokens[$i])){
-														$evalVal .= $tokens[$i][1];
+												for($i += 3; $arrayParenDepth > 0; $i++){
+													if(is_array($tokens[$i+1])){
+														$evalVal .= $tokens[$i+1][1];
 													}
 													else {
-														$evalVal .= $tokens[$i];
-														if($tokens[$i] == ')')
+														$evalVal .= $tokens[$i+1];
+														if($tokens[$i+1] == ')')
 															$arrayParenDepth--;
-														else if($tokens[$i] == '(')
+														else if($tokens[$i+1] == '(')
 															$arrayParenDepth++;
 													}
 												}
 												$paramDetails['default'] = eval("return $evalVal;"); #array(); #NOTE: MORE NEEDED HERE: recursive parsing of values
 												break;
 											case T_CONSTANT_ENCAPSED_STRING:
-												$paramDetails['default'] = eval('return ' . $tokens[$i+2][1] . ';');
+												$i += 2;
+												$paramDetails['default'] = eval('return ' . $tokens[$i][1] . ';');
 												break;
 											case T_DNUMBER:
-												$paramDetails['default'] = (double) $tokens[$i+2][1];
+												$i += 2;
+												$paramDetails['default'] = (double) $tokens[$i][1];
 												break;
 											case T_LNUMBER:
-												$paramDetails['default'] = (int) $tokens[$i+2][1];
+												$i += 2;
+												$paramDetails['default'] = (int) $tokens[$i][1];
 												break;
 											case T_STRING:
-												if(defined($tokens[$i+2][1])) #Bare string is a constant
-													$paramDetails['default'] = eval('return ' . $tokens[$i+2][1] . ';');
+												$i += 2;
+												if(defined($tokens[$i][1])) #Bare string is a constant
+													$paramDetails['default'] = eval('return ' . $tokens[$i][1] . ';');
 												else
-													$paramDetails['default'] = $tokens[$i+2][1];
+													$paramDetails['default'] = $tokens[$i][1];
 												break;
 										}
 									}
@@ -765,7 +771,7 @@ class RPCServer {
 		unset($braceDepth);
 		unset($inClassDef);
 		unset($privateToPublicMap);
-		
+
 		#Iterate over all public methods and see if their parameter lists have been found
 		#   by parsing the tokens of the PHP functions.
 		foreach($this->publicToPrivateMap as $publicProc => $privateProc){

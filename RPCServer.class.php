@@ -1,6 +1,6 @@
 <?php
 # JSON/XML-RPC Server in PHP5 <http://code.google.com/p/json-xml-rpc/>
-# Version: 0.8.0.2 (2007-11-07)
+# Version: 0.8.0.3 (2007-11-??)
 # Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
 # License: GNU General Public License, Free Software Foundation
 #          <http://creativecommons.org/licenses/GPL/2.0/>
@@ -1713,7 +1713,7 @@ class RPCServer {
 		$longint = sprintf("%.0f", (double) $ticks);
 		$ms = (int)substr($longint, -3);
 		$secs = (int)substr($longint, 0, strlen($longint)-3);
-		$date = new DateTime(gmdate('Y-m-d\TH:i:s.' . $ms . 'Z', $secs));
+		$date = new DateTime(gmdate('Y-m-d\TH:i:s.' . $ms . 'Z', $secs)); //NOTE: We should use date() and remove 'Z' so that the user can specify the timezone they want
 		return $date;
 	}
 	

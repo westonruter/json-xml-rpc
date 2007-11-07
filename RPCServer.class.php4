@@ -1,6 +1,6 @@
 <?php
 # JSON/XML-RPC Server in PHP4 <http://code.google.com/p/json-xml-rpc/>
-# Version: 0.8.0.1 (2007-11-02)
+# Version: 0.8.0.2 (2007-11-07)
 # Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
 # License: GNU General Public License, Free Software Foundation
 #          <http://creativecommons.org/licenses/GPL/2.0/>
@@ -8,7 +8,8 @@
 # The comments contained in this code are largely quotations from the following specs:
 #   * XML-RPC: <http://www.xmlrpc.com/spec>
 #   * JSON-RPC 1.0: <http://json-rpc.org/wiki/specification>
-#   * JSON-RPC 1.1 (draft): <http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html>
+#   * JSON-RPC 1.1 (working draft): <http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html>
+# Note that development on JSON-RPC continues at <http://groups.google.com/group/json-rpc>
 #
 # Usage:
 # if(!class_exists('DateTime'))
@@ -1163,7 +1164,8 @@ class RPCServer {
 			return $value;
 		else if(is_string($value)){
 		//case 'string':
-			$value = preg_replace_callback('/([\\\\\/"\x00-\x1F])/', array(&$this, 'getEscapeSequence_callback'), $value); #_callback
+			//Note: in PHP 5.1.2, using 'RPCServer' for &$this raises strict error: Non-static method cannot not be called statically, even though it is declared statically.
+			$value = preg_replace_callback('/([\\\\\/"\x00-\x1F])/', array(&$this, 'getEscapeSequence_callback'), $value); 
 			return '"' . /*utf8_encode*/($value) . '"';
 		}
 		trigger_error("Unable to convert type " . gettype($value) . " to JSON.");
@@ -1332,6 +1334,7 @@ class RPCServer {
 
 					#Regular string
 					else
+						//Note: in PHP 5.1.2, using 'RPCServer' for &$this raises strict error: Non-static method cannot not be called statically, even though it is declared statically (also below)
 						return /*utf8_decode*/(preg_replace_callback('{(\\\\(?:u[0-9a-zA-Z]{4}|"|/|\\\\|[btnfr]))}', array(&$this, 'getEscapedChar_callback'), substr($tokens[$i], 1, -1)));
 				}
 				#Number

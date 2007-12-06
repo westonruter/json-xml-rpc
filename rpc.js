@@ -74,7 +74,7 @@
  */
 
 var rpc = {
-	version:"0.8.0.1",	
+	version:"0.8.0.2",	
 	requestCount: 0
 };
 

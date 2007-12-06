@@ -1,6 +1,6 @@
 /*
  * JSON/XML-RPC Client <http://code.google.com/p/json-xml-rpc/>
- * Version: 0.8.0.1 (2007-09-28)
+ * Version: 0.8.0.2 (2007-12-06)
  * Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
  * License: GNU General Public License, Free Software Foundation
  *          <http://creativecommons.org/licenses/GPL/2.0/>
@@ -102,7 +102,7 @@ rpc.ServiceProxy = function(serviceURL, options){
 	this.__authPassword = null;
 	this.__callbackParamName = 'JSON-response-callback';
 	this.__protocol = 'JSON-RPC';
-	this.__dateEncoding = 'ISO8601'; //"@timestamp@" || "classHinting" || "ASP.NET"
+	this.__dateEncoding = 'ISO8601'; // ("@timestamp@" || "@ticks@") || "classHinting" || "ASP.NET"
 	this.__decodeISO8601 = true; //JSON only
 	
 	//Get the provided options
@@ -169,7 +169,7 @@ rpc.ServiceProxy = function(serviceURL, options){
 		var wrapper = (function(instance, methodName){
 			var call = {instance:instance, methodName:methodName}; //Pass parameters into closure
 			return function(){
-				if(this.__isAsynchronous){
+				if(call.instance.__isAsynchronous){
 					if(arguments.length == 1 && arguments[0] instanceof Object){
 						call.instance.__callMethod(call.methodName,
 												 arguments[0].params,
@@ -561,6 +561,7 @@ rpc.ServiceProxy.prototype.__toJSON = function(value){
 					case 'classHinting': //{"__jsonclass__":["constructor", [param1,...]], "prop1": ...}
 						return '{"__jsonclass__":["Date",[' + value.valueOf() + ']]}';
 					case '@timestamp@':
+					case '@ticks@':
 						return '"@' + value.valueOf() + '@"';
 					case 'ASP.NET':
 						return '"\\/Date(' + value.valueOf() + ')\\/"';
@@ -626,7 +627,7 @@ rpc.ServiceProxy.prototype.__upgradeValuesFromJSON = function(obj){
 					if(matches[5]) obj[key].setUTCMinutes(parseInt(matches[5]));
 					if(matches[6]) obj[key].setUTCMilliseconds(parseInt(matches[6]));
 				}
-				//@timestamp@
+				//@timestamp@ / @ticks@
 				else if(matches = obj[key].match(/^@(\d+)@$/)){
 					obj[key] = new Date(parseInt(matches[1]))
 				}

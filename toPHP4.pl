@@ -12,6 +12,7 @@ open PHP, ">RPCServer.class.php4";
 $source =~ s{(?<=JSON/XML-RPC Server in )PHP5}{PHP4};
 $source =~ s{# //\$server->.+?\n}{# \$server->processRequest();\n};
 $source =~ s{'RPCServer\.class\.php'}{'RPCServer.class.php4'}g;
+$source =~ s{date_default_timezone_set\("UTC"\)}{putenv('TZ=UTC')};
 
 #Remove "self"
 $source =~ s{self(?=::)}{RPCServer}g;

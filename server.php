@@ -62,10 +62,19 @@ function tryDefaultArguments(//$null = null,
 }
 $server->addMethod("tryDefaultArguments");
 
+
+function tryTypedParameters(DateTime $dt){
+	return func_get_args();
+}
+$server->addMethod("tryTypedParameters");
+
 function getServerSource(){
 	return fopen("server.php", 'r');
 }
 $server->addMethod("getServerSource");
+
+require('server.lib.php');
+$server->addMethod("foo");
 
 #$server->setJSONDateFormat('ASP.NET');
 #$server->setJSONDateFormat('classHinting');

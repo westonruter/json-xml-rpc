@@ -1,6 +1,6 @@
 <?php
 # JSON/XML-RPC Server in PHP5 <http://code.google.com/p/json-xml-rpc/>
-# Version: 0.8.0.3 (2007-11-??)
+# Version: 0.8.1 (2007-12-10)
 # Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
 # License: GNU General Public License, Free Software Foundation
 #          <http://creativecommons.org/licenses/GPL/2.0/>
@@ -15,6 +15,7 @@
 # if(!class_exists('DateTime'))
 #    require_once('DateTime.class.php');
 # require_once('RPCServer.class.php');
+# date_default_timezone_set("UTC");
 # $server = RPCServer::getInstance(); //note that the RPCServer class is a singleton
 # function getTemp($zipCode){
 #    //...
@@ -57,7 +58,7 @@ class RPCServer {
 	protected $defaultResponseType;
 	protected $JSONDateFormat = 'ISO8601'; #or "classHinting" "@ticks@" or "ASP.NET"
 	protected $dbResultIndexType = 'ASSOC'; #or "NUM"
-	protected $isUsingIncludedFunctions = false;
+	protected $isUsingIncludedFunctions = false; #if not Reflection API
 	protected $defaultParametersPreserved = true;
 	protected $iso8601StringsConverted = true;
 	
@@ -67,7 +68,7 @@ class RPCServer {
 	
 	#function preserveDefaultParameters($defaultParametersPreserved)
 	#function convertISO8601Strings($iso8601StringsConverted)
-	#function useIncludedFunctions($isUsingIncludedFunctions)
+	#function useIncludedFunctions($isUsingIncludedFunctions) #if not Reflection API
 	#function setDefaultResponseType($type)
 	#function setJSONDateFormat($formatName)
 	#function setDBResultIndexType($indexType)
@@ -211,6 +212,7 @@ class RPCServer {
 		$this->iso8601StringsConverted = (bool) $iso8601StringsConverted;
 	}
 	
+	#disregarded if Reflection API available
 	function useIncludedFunctions($isUsingIncludedFunctions){
 		$this->isUsingIncludedFunctions = (bool) $isUsingIncludedFunctions;
 	}
@@ -609,181 +611,225 @@ class RPCServer {
 
 
 		###################################################################################
-		# Parse the server file(s) to determine the names, types, and default values
-		#    of the methods' parameters
+		# Introspect the methods to determine their parameter lists
 		###################################################################################
 		$parametersForPrivateProcs = array();
-		$privateToPublicMap = array_flip($this->publicToPrivateMap);
-		if($this->isUsingIncludedFunctions)
-			$sourceFiles = get_included_files();
-		else
-			$sourceFiles = array();
-		array_push($sourceFiles, $_SERVER['SCRIPT_FILENAME']);
-		foreach($sourceFiles as $sourceFile){
-			if($sourceFile == __FILE__)
-				continue;
-			$tokens = token_get_all(file_get_contents($sourceFile));
-			
-			#Remove all comments and whitespace tokens
-			for($i = 0; $i < count($tokens); ){
-				if(is_array($tokens[$i]) && ($tokens[$i][0] == T_WHITESPACE || $tokens[$i][0] == T_COMMENT))
-					array_splice($tokens, $i, 1);
-				else $i++;
-			}
-			
-			$inClassDef = false;
-			$braceDepth = 0;
-			for($i = 0; $i < count($tokens); $i++){
-				#Skip all class definitions #################################
-				if(is_array($tokens[$i])){
-					if($tokens[$i][0] == T_CLASS){
-						$inClassDef = true;
-						continue;
-					}
-				}
-				else if($tokens[$i] == '{'){
-					$braceDepth++;
-				}
-				#If token is closing brace and the brace depth is now zero, then class definition complete
-				else if($tokens[$i] == '}' && (--$braceDepth == 0)){
-					$inClassDef = false;
-					++$i; #move to next token after class
-				}
-				if($inClassDef)
-					continue;
-
-				# Parse function declarations ################################################
-				if(is_array($tokens[$i]) && $tokens[$i][0] == T_FUNCTION){
-					#Get function name
-					++$i; #now $tokens[$i] == the function name
-					$functionName = $tokens[$i][1];
-
-					if(!isset($privateToPublicMap[$functionName]))
-						continue;
-					$parametersForPrivateProcs[$functionName] = array();
+		
+		/*BEGIN PHP5*/
+		/*END PHP5*/
+		/*BEGIN PHP4**
+		**END PHP4*/
+		
+		#Using the Reflection API in PHP 5.1.0
+		if(class_exists('ReflectionFunction') && method_exists('ReflectionParameter', 'isArray')){
+			foreach(array_keys($this->publicToPrivateMap) as $publicProc){
+				$functionName = $this->publicToPrivateMap[$publicProc];
+				$rf = new ReflectionFunction($functionName);
+				$parametersForPrivateProcs[$functionName] = array();
+				foreach($rf->getParameters() as $param){ #$i => 
+					if($param->isPassedByReference())
+						trigger_error("User functions cannot be defined with parameters passed by reference. The function \"$functionName\" wants the parameter \"" . $param->getName() . "\" to be passed by reference.");
 					
-					#Get parameter list
-					++$i; #now $tokens[$i] == '('
-					$parenDepth = 1;
-					
-					#Iterate over every parameter for the function
-					for($i++; $i < count($tokens) && $parenDepth > 0; $i++){
-						if(is_array($tokens[$i])){
-							#Parameter name found: obtain all type information available
-							if($parenDepth == 1 && $tokens[$i][0] == T_VARIABLE){
-								$paramDetails = array('name' => substr($tokens[$i][1], 1),
-													  'type' => 'any');
-								
-								#Get the argument type
-								if(is_array($tokens[$i-1])){
-									#Object parameter (specifically DateTime)
-									if($tokens[$i-1][0] == T_STRING){
-										switch(strtolower($tokens[$i-1][1])){
-											case 'datetime':
-												#$paramType = "datetime";
-												#$paramType = "obj";
-												$paramDetails['type'] = 'obj';
-												break;
-											default:
-												trigger_error("The only class type that may be hinted is DateTime; you provided \"" . $tokens[$i-1][1] . "\".");
-										}
-									}
-									#Array parameter
-									else if($tokens[$i-1][0] == T_ARRAY){
-										#$paramType = 'arr';
-										$paramDetails['type'] = 'arr';
-									}
-								}
-								#Of course data may not be passed from the client by reference
-								else if($tokens[$i-1] == '&')
-									trigger_error("User functions cannot be defined with parameters passed by reference.");
-								
-								#Get the default value if it was was provided
-								if($this->defaultParametersPreserved && $tokens[$i+1] == '='){
-									#$paramDetails['default']
-									if(is_array($tokens[$i+2])){
-										switch($tokens[$i+2][0]){
-											case T_ARRAY:
-												#Iterate over the next tokens to compose a string of the entire
-												#   literal array value used for the default; then eval this string
-												$evalVal = 'array(';
-												$arrayParenDepth = 1;
-												for($i += 3; $arrayParenDepth > 0; $i++){
-													if(is_array($tokens[$i+1])){
-														$evalVal .= $tokens[$i+1][1];
-													}
-													else {
-														$evalVal .= $tokens[$i+1];
-														if($tokens[$i+1] == ')')
-															$arrayParenDepth--;
-														else if($tokens[$i+1] == '(')
-															$arrayParenDepth++;
-													}
-												}
-												$paramDetails['default'] = eval("return $evalVal;"); #array(); #NOTE: MORE NEEDED HERE: recursive parsing of values
-												break;
-											case T_CONSTANT_ENCAPSED_STRING:
-												$i += 2;
-												$paramDetails['default'] = eval('return ' . $tokens[$i][1] . ';');
-												break;
-											case T_DNUMBER:
-												$i += 2;
-												$paramDetails['default'] = (double) $tokens[$i][1];
-												break;
-											case T_LNUMBER:
-												$i += 2;
-												$paramDetails['default'] = (int) $tokens[$i][1];
-												break;
-											case T_STRING:
-												$i += 2;
-												if(defined($tokens[$i][1])) #Bare string is a constant
-													$paramDetails['default'] = eval('return ' . $tokens[$i][1] . ';');
-												else
-													$paramDetails['default'] = $tokens[$i][1];
-												break;
-										}
-									}
-								}
-								array_push($parametersForPrivateProcs[$functionName], $paramDetails);
-							}
-						}
-						#Determine when the parameter list is entered and exited
-						else {
-							if($tokens[$i] == '(')
-								$parenDepth++;
-							else if($tokens[$i] == ')'){
-								$parenDepth--;
-								
-								#This right paren marks the end of the parameter list
-								if($parenDepth == 0)
-									break;
-							}
+					$paramDetails = array('name' => $param->getName(),
+										  'type' => 'any');
+					if($param->isDefaultValueAvailable())
+						$paramDetails['default'] = $param->getDefaultValue();
+					if($param->isArray())
+						$paramDetails['type'] = 'arr';
+					else if($rc = $param->getClass()){
+						switch(strtolower($rc->getName())){
+							case 'datetime':
+								$paramDetails['type'] = 'obj';
+								break;
+							default:
+								trigger_error("The only class type that may be hinted is DateTime; you provided \"" . $rc->getName() . "\" in the function \"$functionName\".");
 						}
 					}
+					//$param->isOptional() and $param->allowsNull() are not needed since PHP will raise errors
+					//  when call_user_func is invoked.
+					array_push($parametersForPrivateProcs[$functionName], $paramDetails);
 				}
 			}
-		}	
-		unset($tokens);
-		unset($sourceFiles);
-		unset($sourceFile);
-		unset($paramDetails);
-		unset($parenDepth);
-		unset($functionName);
-		unset($braceDepth);
-		unset($inClassDef);
-		unset($privateToPublicMap);
-
-		#Iterate over all public methods and see if their parameter lists have been found
-		#   by parsing the tokens of the PHP functions.
-		foreach($this->publicToPrivateMap as $publicProc => $privateProc){
-			if(!isset($parametersForPrivateProcs[$privateProc]))
-				trigger_error("Unable to use the public method \"$publicProc\" because its associated private ".
-									"procedure is located in an included file; to get around this, you must explicitly ".
-									"allow externally defined functions by calling \$RPCServerInstance->useIncludedFunctions(true). ".
-									"Note you may not use non-user-defined functions as public methods (native PHP functions may not be used).");
+			unset($functionName);
+			unset($rf);
+			unset($rc);
+			unset($param);
+			unset($paramDetails);
 		}
-		unset($publicProc);
-		unset($privateProc);
+		#Using the PHP tokenizer before PHP 5.1.0
+		else {
+			$privateToPublicMap = array_flip($this->publicToPrivateMap);
+			if($this->isUsingIncludedFunctions)
+				$sourceFiles = get_included_files();
+			else
+				$sourceFiles = array();
+			array_push($sourceFiles, $_SERVER['SCRIPT_FILENAME']);
+			foreach($sourceFiles as $sourceFile){
+				if($sourceFile == __FILE__)
+					continue;
+				$tokens = token_get_all(file_get_contents($sourceFile));
+				
+				#Remove all comments and whitespace tokens
+				for($i = 0; $i < count($tokens); ){
+					if(is_array($tokens[$i]) && ($tokens[$i][0] == T_WHITESPACE || $tokens[$i][0] == T_COMMENT))
+						array_splice($tokens, $i, 1);
+					else $i++;
+				}
+				
+				$inClassDef = false;
+				$braceDepth = 0;
+				for($i = 0; $i < count($tokens); $i++){
+					#Skip all class definitions #################################
+					if(is_array($tokens[$i])){
+						if($tokens[$i][0] == T_CLASS){
+							$inClassDef = true;
+							continue;
+						}
+					}
+					else if($tokens[$i] == '{'){
+						$braceDepth++;
+					}
+					#If token is closing brace and the brace depth is now zero, then class definition complete
+					else if($tokens[$i] == '}' && (--$braceDepth == 0)){
+						$inClassDef = false;
+						++$i; #move to next token after class
+					}
+					if($inClassDef)
+						continue;
+	
+					# Parse function declarations ################################################
+					if(is_array($tokens[$i]) && $tokens[$i][0] == T_FUNCTION){
+						#Get function name
+						++$i; #now $tokens[$i] == the function name
+						$functionName = $tokens[$i][1];
+	
+						if(!isset($privateToPublicMap[$functionName]))
+							continue;
+						$parametersForPrivateProcs[$functionName] = array();
+						
+						#Get parameter list
+						++$i; #now $tokens[$i] == '('
+						$parenDepth = 1;
+						
+						#Iterate over every parameter for the function
+						for($i++; $i < count($tokens) && $parenDepth > 0; $i++){
+							if(is_array($tokens[$i])){
+								#Parameter name found: obtain all type information available
+								if($parenDepth == 1 && $tokens[$i][0] == T_VARIABLE){
+									$paramDetails = array('name' => substr($tokens[$i][1], 1),
+														  'type' => 'any');
+									
+									#Get the argument type
+									if(is_array($tokens[$i-1])){
+										#Object parameter (specifically DateTime)
+										if($tokens[$i-1][0] == T_STRING){
+											switch(strtolower($tokens[$i-1][1])){
+												case 'datetime':
+													#$paramType = "datetime";
+													#$paramType = "obj";
+													$paramDetails['type'] = 'obj';
+													break;
+												default:
+													trigger_error("The only class type that may be hinted is DateTime; you provided \"" . $tokens[$i-1][1] . "\" in the function \"$functionName\".");
+											}
+										}
+										#Array parameter
+										else if($tokens[$i-1][0] == T_ARRAY){
+											#$paramType = 'arr';
+											$paramDetails['type'] = 'arr';
+										}
+									}
+									#Of course data may not be passed from the client by reference
+									else if($tokens[$i-1] == '&')
+										trigger_error("User functions cannot be defined with parameters passed by reference. The function \"$functionName\" wants the parameter \"" . $paramDetails['name'] . "\" to be passed by reference.");
+									
+									#Get the default value if it was was provided
+									if($this->defaultParametersPreserved && $tokens[$i+1] == '='){
+										#$paramDetails['default']
+										if(is_array($tokens[$i+2])){
+											switch($tokens[$i+2][0]){
+												case T_ARRAY:
+													#Iterate over the next tokens to compose a string of the entire
+													#   literal array value used for the default; then eval this string
+													$evalVal = 'array(';
+													$arrayParenDepth = 1;
+													for($i += 3; $arrayParenDepth > 0; $i++){
+														if(is_array($tokens[$i+1])){
+															$evalVal .= $tokens[$i+1][1];
+														}
+														else {
+															$evalVal .= $tokens[$i+1];
+															if($tokens[$i+1] == ')')
+																$arrayParenDepth--;
+															else if($tokens[$i+1] == '(')
+																$arrayParenDepth++;
+														}
+													}
+													$paramDetails['default'] = eval("return $evalVal;"); #array(); #NOTE: MORE NEEDED HERE: recursive parsing of values
+													break;
+												case T_CONSTANT_ENCAPSED_STRING:
+													$i += 2;
+													$paramDetails['default'] = eval('return ' . $tokens[$i][1] . ';');
+													break;
+												case T_DNUMBER:
+													$i += 2;
+													$paramDetails['default'] = (double) $tokens[$i][1];
+													break;
+												case T_LNUMBER:
+													$i += 2;
+													$paramDetails['default'] = (int) $tokens[$i][1];
+													break;
+												case T_STRING:
+													$i += 2;
+													if(defined($tokens[$i][1])) #Bare string is a constant
+														$paramDetails['default'] = eval('return ' . $tokens[$i][1] . ';');
+													else
+														$paramDetails['default'] = $tokens[$i][1];
+													break;
+											}
+										}
+									}
+									array_push($parametersForPrivateProcs[$functionName], $paramDetails);
+								}
+							}
+							#Determine when the parameter list is entered and exited
+							else {
+								if($tokens[$i] == '(')
+									$parenDepth++;
+								else if($tokens[$i] == ')'){
+									$parenDepth--;
+									
+									#This right paren marks the end of the parameter list
+									if($parenDepth == 0)
+										break;
+								}
+							}
+						}
+					}
+				}
+			}	
+			unset($tokens);
+			unset($sourceFiles);
+			unset($sourceFile);
+			unset($paramDetails);
+			unset($parenDepth);
+			unset($functionName);
+			unset($braceDepth);
+			unset($inClassDef);
+			unset($privateToPublicMap);
+	
+			#Iterate over all public methods and see if their parameter lists have been found
+			#   by parsing the tokens of the PHP functions.
+			foreach($this->publicToPrivateMap as $publicProc => $privateProc){
+				if(!isset($parametersForPrivateProcs[$privateProc]))
+					trigger_error("Because this version of PHP does not support the Reflection API, unable to use the public method \"$publicProc\" because its associated private ".
+										"procedure is located in an included file; to get around this, you must explicitly ".
+										"allow externally defined functions by calling \$RPCServerInstance->useIncludedFunctions(true); this will decrease performance. ".
+										"Note you may not use non-user-defined functions as public methods (native PHP functions may not be used) when the Reflection API is not available.");
+			}
+			unset($publicProc);
+			unset($privateProc);
+		}
 
 		#############################################################################################
 		# Execute request

@@ -4,7 +4,7 @@
  * License: http://creativecommons.org/licenses/LGPL/2.1/
  */
 
-console.info(rpc.toXMLRPC([2,3,4])); //rpc.parseXMLRPC(rpc.toXMLRPC([2,3,4]))
+//console.info(rpc.__toXMLRPC([2,3,4])); //rpc.parseXMLRPC(rpc.__toXMLRPC([2,3,4]))
 
 window.onerror = function(msg){
 	$('responseFieldset').removeClassName('success');

@@ -1,6 +1,6 @@
 <?php
 # JSON/XML-RPC Server in PHP4 <http://code.google.com/p/json-xml-rpc/>
-# Version: 0.8.1 (2007-12-10)
+# Version: 0.8.1.1 (2008-01-06)
 # Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
 # License: GNU General Public License, Free Software Foundation
 #          <http://creativecommons.org/licenses/GPL/2.0/>
@@ -890,12 +890,12 @@ class RPCServer {
 			#   this member and where each element uniquely names a procedure.
 			$this->responseData['procs'] = array();
 			
-			foreach($this->publicToPrivateMap as $name){
+			foreach($this->publicToPrivateMap as $publicName => $privateName){
 				#A procedure description is a JSON Object with the following members and properties:
 				$proc = array();
 				
 				#name REQUIRED. A String value that provides a simple name for the method.
-				$proc['name'] = $name;
+				$proc['name'] = $publicName;
 				
 				#params OPTIONAL. An Array value whose elements are either Procedure Parameter Description
 				#   objects or String values. If an element each of uniquely describes a single parameter of
@@ -906,7 +906,7 @@ class RPCServer {
 				#   the procedure being described. If this member is missing or the Null value then the procedure
 				#   does not expect any parameters.
 				$proc['params'] = array();
-				foreach($parametersForPrivateProcs[$name] as $param){
+				foreach($parametersForPrivateProcs[$privateName] as $param){
 					array_push($proc['params'], array("name" => $param['name'], "type" => $param['type']));
 				}
 				

@@ -262,20 +262,16 @@ rpc.ServiceProxy.prototype.__callMethod = function(methodName, params, successHa
 		//Calls made with XMLHttpRequest ------------------------------------------------------------
 		else {
 			//Obtain and verify the parameters
-			if(params){
-				if(!(params instanceof Object) || params instanceof Date) //JSON-RPC 1.1 allows params to be a hash not just an array
-					throw Error('When making asynchronous calls, the parameters for the method must be passed as an array (or a hash); the value you supplied (' + String(params) + ') is of type "' + typeof(params) + '".');
-				//request.params = params;
-			}
+			if(params && (!(params instanceof Object) || params instanceof Date)) //JSON-RPC 1.1 allows params to be a hash not just an array
+				throw Error('When making asynchronous calls, the parameters for the method must be passed as an array (or a hash); the value you supplied (' + String(params) + ') is of type "' + typeof(params) + '".');
 			
 			//Prepare the XML-RPC request
 			var request,postData;
 			if(this.__protocol == 'XML-RPC'){
-				if(!(params instanceof Array))
-					throw Error("Unable to pass associative arrays to XML-RPC services.");
-				
 				var xml = ['<?xml version="1.0"?><methodCall><methodName>' + methodName + '</methodName>'];
 				if(params){
+					if(!(params instanceof Array))
+						throw Error("Unable to pass associative arrays to XML-RPC services.");
 					xml.push('<params>');
 					for(var i = 0; i < params.length; i++)
 						xml.push('<param>' + this.__toXMLRPC(params[i]) + '</param>');

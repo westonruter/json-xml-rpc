@@ -29,7 +29,7 @@ require_once('RPCServer.class.php');
 //$p1 = new Point2D(1.233, 3.445);
 //
 //$p1->setLabel("point #1");
-
+date_default_timezone_set(date_default_timezone_get());
 
 $server = RPCServer::getInstance();
 $server->name = "Test JSON/XML-RPC Server";
@@ -73,8 +73,8 @@ function getServerSource(){
 }
 $server->addMethod("getServerSource");
 
-require('server.lib.php');
-$server->addMethod("foo");
+#require('server.lib.php');
+#$server->addMethod("foo");
 
 #$server->setJSONDateFormat('ASP.NET');
 #$server->setJSONDateFormat('classHinting');
@@ -85,12 +85,29 @@ $server->addMethod("foo");
 
 #print json_decode('asdsd"\\s\td\nsd"');
 
-$server->processRequest();
+function passThrough2(){
+	return func_get_args();
+}
+$server->addMethod("passThrough2", "rpccheck.call"); //, "rpccheck_call"
+
+
 
 #print_r(json_decode('{"__jsonclass__":["Date", [455414400000]]}'));
 #print_r(json_decode('["asd","455414400000"]', true));
 #print 455414400000;
 
 #print base64_encode("I am saying, Hello world");
+
+
+function testArgs(){
+	
+	return func_get_args();
+	
+}
+$server->addMethod("testArgs");
+
+
+
+$server->processRequest();
 
 ?>

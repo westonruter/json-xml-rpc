@@ -2,8 +2,8 @@
  * JSON/XML-RPC Client <http://code.google.com/p/json-xml-rpc/>
  * Version: 0.8.0.2 (2007-12-06)
  * Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
- * License: GNU General Public License, Free Software Foundation
- *          <http://creativecommons.org/licenses/GPL/2.0/>
+ * License: Dual licensed under MIT <http://creativecommons.org/licenses/MIT/>
+ *          and GPL <http://creativecommons.org/licenses/GPL/2.0/> licenses.
  *
  * Original inspiration for the design of this implementation is from jsolait, from which 
  * are taken the "ServiceProxy" name and the interface for synchronous method calls.

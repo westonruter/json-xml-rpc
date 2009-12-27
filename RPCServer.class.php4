@@ -2,8 +2,8 @@
 # JSON/XML-RPC Server in PHP4 <http://code.google.com/p/json-xml-rpc/>
 # Version: 0.8.1.1 (2008-01-06)
 # Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
-# License: GNU General Public License, Free Software Foundation
-#          <http://creativecommons.org/licenses/GPL/2.0/>
+# License: Dual licensed under MIT <http://creativecommons.org/licenses/MIT/>
+#          and GPL <http://creativecommons.org/licenses/GPL/2.0/> licenses.
 #
 # The comments contained in this code are largely quotations from the following specs:
 #   * XML-RPC: <http://www.xmlrpc.com/spec>

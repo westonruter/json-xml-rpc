@@ -1,7 +1,8 @@
 /*
  * JSON/XML-RPC Server Test Console <http://code.google.com/p/json-xml-rpc/>
  * Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
- * License: http://creativecommons.org/licenses/LGPL/2.1/
+ * License: Dual licensed under MIT <http://creativecommons.org/licenses/MIT/>
+ *          and GPL <http://creativecommons.org/licenses/GPL/2.0/> licenses.
  */
 
 //console.info(rpc.__toXMLRPC([2,3,4])); //rpc.parseXMLRPC(rpc.__toXMLRPC([2,3,4]))

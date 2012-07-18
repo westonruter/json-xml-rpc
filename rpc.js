@@ -680,9 +680,7 @@ rpc.ServiceProxy.prototype.__toXMLRPC = function(value){
 			break;
 		case 'string':
 			xml.push('<string>');
-			xml.push(value.replace(/[<>&]/, function(ch){
-				
-			})); //escape for XML!
+			xml.push(rpc.escape(value));
 			xml.push('</string>');
 			break;
 		case 'object':
@@ -705,7 +703,7 @@ rpc.ServiceProxy.prototype.__toXMLRPC = function(value){
 				for(var key in value){
 					if(!useHasOwn || value.hasOwnProperty(key)){
 						xml.push('<member>');
-						xml.push('<name>' + key + '</name>'); //Excape XML!
+						xml.push('<name>' + rpc.escape(key) + '</name>');
 						xml.push(this.__toXMLRPC(value[key]));
 						xml.push('</member>');
 					}
@@ -1023,4 +1021,12 @@ rpc.zeroPad = function(value, width){
 	while(value.length < width)
 		value = '0' + value;
 	return value;
+};
+
+// Escape XML entities:
+rpc.escape = function(str) {
+	return str.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;');
 };

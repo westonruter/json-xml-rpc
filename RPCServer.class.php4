@@ -1733,7 +1733,7 @@ class RPCServer {
 		}
 		#Detect if token is a float; the ceiling of the DOUBLE val
 		#   should be the same as the INT val
-		else if((int)ceil($double) - $int > 0.1){
+		else if( (int)ceil( abs($double) ) - abs($int) > 0.1){
 			return $double;
 		}
 		else

@@ -1,5 +1,5 @@
 <?php
-# JSON/XML-RPC Server in PHP5 <http://code.google.com/p/json-xml-rpc/>
+# JSON/XML-RPC Server in PHP5 <https://github.com/Movavi/json-xml-rpc> based on <http://code.google.com/p/json-xml-rpc/>
 # Version: 0.8.1.1 (2008-01-06)
 # Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
 # License: Dual licensed under MIT <http://creativecommons.org/licenses/MIT/>

@@ -1,5 +1,5 @@
 <?php
-# JSON/XML-RPC Server in PHP4 <http://code.google.com/p/json-xml-rpc/>
+# JSON/XML-RPC Server in PHP4 <https://github.com/Movavi/json-xml-rpc> based on <http://code.google.com/p/json-xml-rpc/>
 # Version: 0.8.1.1 (2008-01-06)
 # Copyright: 2007, Weston Ruter <http://weston.ruter.net/>
 # License: Dual licensed under MIT <http://creativecommons.org/licenses/MIT/>
@@ -1733,7 +1733,7 @@ class RPCServer {
 		}
 		#Detect if token is a float; the ceiling of the DOUBLE val
 		#   should be the same as the INT val
-		else if((int)ceil($double) - $int > 0.1){
+		else if( (int)ceil( abs($double) ) - abs($int) > 0.1){
 			return $double;
 		}
 		else
